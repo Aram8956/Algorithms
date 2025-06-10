@@ -1,115 +1,106 @@
 ﻿namespace Node;
 
-public class MyList<T>
+public class MyList<T>: IEnumerable<T>
 {
-    public T value;
-    public MyList<T> next;
+    private int count;
+    public int Count => count;
+    private Node<T> head;
 
-    public MyList()
+    public void PushFront(T value)
     {
-        value = default(T);
-        next = null;
+        var temp = new Node<T>(value);
+        temp.next = head;
+        head = temp;
+        ++count;
     }
 
-    private MyList(T value)
+    public void PushBack(T value)
     {
-        this.value = value;
-        next = null;
-    }
-
-    private MyList(T value, MyList<T> next)
-    {
-        this.value = value;
-        this.next = next;
-    }
-
-    public int Size()
-    {
-        int size = 0;
-        MyList<T> temp = next;
-        if (next == null)
+        var temp = new Node<T>(value);
+        if (head == null)
         {
-            return 0;
+            head = temp;
         }
-
-        while (temp != null)
+        else
         {
-            temp = temp.next;
-            size += 1;
+            var dummy = head;
+            while (dummy.next != null)
+            {
+                dummy = dummy.next;
+            }
+            dummy.next = temp;
         }
-
-        return size;
+        ++count;
     }
 
-    public void Print()
+    public void Insert(T value, int index)
     {
-        MyList<T> temp = next;
-        while (temp != null)
-        {
-            Console.Write(temp.value);
-            Console.Write("->");
-            temp = temp.next;
-        }
-
-        Console.WriteLine();
-    }
-    
-    public void PushBack(T item)
-    {
-        MyList<T> newNode = new MyList<T>(item);
-        MyList<T> dummy = next;
-        if (dummy == null)
-        {
-            dummy.next = newNode;
-            return;
-        }
-        while (dummy.next != null)
-        {
-            dummy = dummy.next;
-        }
-        dummy.next = newNode;
-    }
-
-    public void PushFront(T item)
-    {
-        MyList<T> newNode = new MyList<T>(item);
-        newNode.next = next;
-        next = newNode;
-    }
-
-    public void Insert(T item, int index)
-    {
-        if (index > Size())
+        if (index > count || index < 0)
         {
             throw new IndexOutOfRangeException();
         }
-        MyList<T> newNode = new MyList<T>(item);
-        MyList<T> dummy = this;
-        for (int i = 0; i < index; ++i)
+        if (index == 0)
+        {
+            PushFront(value);
+            return;
+        }
+        
+        var temp = new Node<T>(value);
+        var dummy = head;
+        for (int i = 0; i < index - 1; i++)
         {
             dummy = dummy.next;
         }
-        newNode.next = dummy.next;
-        dummy.next = newNode;
+
+        temp.next = dummy.next;
+        dummy.next = temp;
+        ++count;
     }
 
     public void Erase(int index)
     {
-        int length = Size();
-        if (index > length || index < 0)
+        if (index < 0 || index >= count)
         {
             throw new IndexOutOfRangeException();
         }
 
-
-        MyList<T> dummy = this;
-        for (int i = 0; i < index; ++i)
+        if (index == 0)
         {
+            head = head.next;
+        }
+        else
+        {
+            var dummy = head;
+            for (int i = 0; i < index - 1; i++)
+            {
+                dummy = dummy.next; 
+            }
+            var temp = dummy.next;
+            dummy.next = dummy.next.next;
+            temp.next = null;
+        }
+        --count;
+    }
+
+    public void Print()
+    {
+        var temp = head;
+        foreach (var item in this)
+        {
+            Console.Write($"{item} -> ");
+        }
+        Console.Write("null");
+        Console.WriteLine();
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        var dummy = head;
+        while (dummy != null)
+        {
+            yield return dummy.value;
             dummy = dummy.next;
         }
-        
-        MyList<T> newNode = dummy.next;
-        dummy.next = newNode.next;
-        newNode.next = null;
     }
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator(); 
 }
