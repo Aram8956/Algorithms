@@ -135,7 +135,7 @@ static void Main(string[] args)
 
         for (int i = 0; i < 432; i++)
         {
-            array1[i] = rand.Next(0, 432); // случайное число от 0 до 9999
+            array1[i] = rand.Next(0, 432); 
             array2[i] = rand.Next(0, 432);
         }
         
@@ -151,4 +151,5 @@ static void Main(string[] args)
         Console.WriteLine("Merge sort: " + stop2.Elapsed.TotalMilliseconds + " ms");
         
     }
+
 }
